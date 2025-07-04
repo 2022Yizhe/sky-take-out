@@ -1,7 +1,9 @@
 **/target/
+/doc/
 .idea
+**/test/
+
+
 *.iml
 *.class
 *Test.java
-**/test/
-/doc/

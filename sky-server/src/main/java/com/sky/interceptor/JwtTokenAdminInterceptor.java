@@ -1,6 +1,7 @@
 package com.sky.interceptor;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.context.BaseContext;
 import com.sky.properties.JwtProperties;
 import com.sky.utils.JwtUtil;
 import io.jsonwebtoken.Claims;
@@ -23,18 +24,18 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
     private JwtProperties jwtProperties;
 
     /**
-     * 校验jwt
-     *
-     * @param request
-     * @param response
-     * @param handler
-     * @return
-     * @throws Exception
+     * 校验 jwt
+     * 除了登录接口外，其他所有业务请求，都需要进行 jwt 令牌校验（可以在此处存储当前用户信息到 ThreadLocal）
+     * @param request 客户端请求
+     * @param response 响应
+     * @param handler 处理器
+     * @return 拦截器放行结果（true - 放行, false - 不放行）
+     * @throws Exception 拦截器异常
      */
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
-        //判断当前拦截到的是Controller的方法还是其他资源
+        // 判断当前拦截到的是 Controller 的方法还是其他资源
         if (!(handler instanceof HandlerMethod)) {
-            //当前拦截到的不是动态方法，直接放行
+            // 当前拦截到的不是动态方法，直接放行
             return true;
         }
 
@@ -43,16 +44,17 @@ public class JwtTokenAdminInterceptor implements HandlerInterceptor {
 
         //2、校验令牌
         try {
-            log.info("jwt校验:{}", token);
+            log.info("[Interceptor] jwt 校验: {}", token);
             Claims claims = JwtUtil.parseJWT(jwtProperties.getAdminSecretKey(), token);
             Long empId = Long.valueOf(claims.get(JwtClaimsConstant.EMP_ID).toString());
-            log.info("当前员工id：", empId);
-            //3、通过，放行
-            return true;
+
+            log.info("[Interceptor] 当前员工 id: {}", empId);
+            BaseContext.setCurrentId(empId);    // 存储当前员工 id 到 ThreadLocal 中
+
+            return true;    // 放行
         } catch (Exception ex) {
-            //4、不通过，响应401状态码
             response.setStatus(401);
-            return false;
+            return false;   // 不放行，响应 401 状态码
         }
     }
 }

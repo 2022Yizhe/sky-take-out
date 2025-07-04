@@ -38,19 +38,21 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
     }
 
     /**
-     * 通过knife4j生成接口文档
+     * 通过 knife4j 生成接口文档
      * @return
      */
     @Bean
     public Docket docket() {
+        log.info("[Config] 进行生成接口文档...");
         ApiInfo apiInfo = new ApiInfoBuilder()
-                .title("苍穹外卖项目接口文档")
+                .title("苍穹外卖接口文档")
                 .version("2.0")
-                .description("苍穹外卖项目接口文档")
+                .description("苍穹外卖接口文档")
                 .build();
         Docket docket = new Docket(DocumentationType.SWAGGER_2)
                 .apiInfo(apiInfo)
                 .select()
+                // 指定要扫描生成接口的包
                 .apis(RequestHandlerSelectors.basePackage("com.sky.controller"))
                 .paths(PathSelectors.any())
                 .build();
@@ -62,7 +64,10 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
      * @param registry
      */
     protected void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/doc.html").addResourceLocations("classpath:/META-INF/resources/");
+        log.info("[Config] 设置静态资源映射...");
+        String pathPatterns = "/doc.html";
+        registry.addResourceHandler(pathPatterns).addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**").addResourceLocations("classpath:/META-INF/resources/webjars/");
+        log.info("[Config] 设置完成，接口文档访问 URL - http://localhost:8080" + pathPatterns);
     }
 }

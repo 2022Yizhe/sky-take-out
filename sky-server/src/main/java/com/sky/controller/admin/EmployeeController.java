@@ -107,7 +107,6 @@ public class EmployeeController {
         return Result.success(pageResult);
     }
 
-
     /**
      * 启用、禁用员工账号
      * @param status 请求路径参数：状态 status
@@ -123,4 +122,35 @@ public class EmployeeController {
 
         return Result.success();
     }
+
+    /**
+     * 根据 id 查询员工信息
+     * @param id 员工 id
+     * @return REST 返回结果
+     */
+    @GetMapping("/{id}")
+    @ApiOperation("根据 id 查询员工信息")
+    public Result<Employee> getById(@PathVariable Long id){
+
+        log.info("[Controller] 根据 id 查询员工信息，员工 id: {}", id);
+        Employee employee = employeeService.getById(id);
+
+        return Result.success(employee);
+    }
+
+    /**
+     * 修改员工信息
+     * @param employeeDTO 修改员工信息 DTO 对象
+     * @return REST 返回结果
+     */
+    @PutMapping
+    @ApiOperation("修改员工信息")
+    public Result<String> update(@RequestBody EmployeeDTO employeeDTO){
+
+        log.info("[Controller] 修改员工信息，员工信息: {}", employeeDTO);
+        employeeService.update(employeeDTO);
+
+        return Result.success();
+    }
+
 }

@@ -103,8 +103,6 @@ public class EmployeeServiceImpl implements EmployeeService {
 
     /**
      * 启用、禁用员工账号
-     * @param status 员工状态
-     * @param id 员工 id
      */
     @Override
     public void startOrStop(Integer status, Long id) {
@@ -115,6 +113,37 @@ public class EmployeeServiceImpl implements EmployeeService {
                 .status(status)
                 .id(id)
                 .build();
+        employeeMapper.update(employee);
+    }
+
+    /**
+     * 根据 id 查询员工信息
+     */
+    @Override
+    public Employee getById(Long id) {
+
+        // 注意：隐藏密码
+        Employee employee = employeeMapper.getById(id);
+        employee.setPassword("****");
+        return employee;
+    }
+
+    /**
+     * 修改员工信息
+     */
+    @Override
+    public void update(EmployeeDTO employeeDTO) {
+        // update employee set id = ?, ...  where id = ?
+
+        Employee employee = new Employee();
+
+        // 对象属性拷贝（等效于一次性 set 所有共有属性）：属性名一致时，前对象属性值会复制给后对象属性
+        BeanUtils.copyProperties(employeeDTO, employee);
+
+        // 设置修改时间、修改人
+        employee.setUpdateTime(LocalDateTime.now());
+        employee.setUpdateUser(BaseContext.getCurrentId()); // 取出当前员工 id 于 ThreadLocal
+
         employeeMapper.update(employee);
     }
 

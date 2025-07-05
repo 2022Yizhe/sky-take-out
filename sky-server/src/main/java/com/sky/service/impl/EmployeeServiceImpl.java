@@ -34,6 +34,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     /**
      * 员工登录
      */
+    @Override
     public Employee login(EmployeeLoginDTO employeeLoginDTO) {
         String username = employeeLoginDTO.getUsername();
         String password = employeeLoginDTO.getPassword();
@@ -66,6 +67,7 @@ public class EmployeeServiceImpl implements EmployeeService {
     /**
      * 新增员工
      */
+    @Override
     public void save(EmployeeDTO employeeDTO) {
         Employee employee = new Employee();
 
@@ -97,6 +99,23 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 调用分页查询方法，封装为 PageResult 对象
         Page<Employee> page = employeeMapper.pageQuery(employeePageQueryDTO);
         return new PageResult(page.getTotal(), page.getResult());
+    }
+
+    /**
+     * 启用、禁用员工账号
+     * @param status 员工状态
+     * @param id 员工 id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        // update employee set status = ? where id = ?
+
+        // 使用 lombok 提供的 builder 方法来创建 Employee 对象
+        Employee employee = Employee.builder()
+                .status(status)
+                .id(id)
+                .build();
+        employeeMapper.update(employee);
     }
 
 }

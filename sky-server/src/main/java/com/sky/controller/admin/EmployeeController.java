@@ -106,4 +106,21 @@ public class EmployeeController {
 
         return Result.success(pageResult);
     }
+
+
+    /**
+     * 启用、禁用员工账号
+     * @param status 请求路径参数：状态 status
+     * @param id 请求 Query 参数：员工 id
+     * @return REST 返回结果
+     */
+    @PostMapping("/status/{status}")
+    @ApiOperation("启用、禁用员工账号")
+    public Result<String> startOrStop(@PathVariable Integer status, Long id){
+
+        log.info("[Controller] 启用、禁用员工账号，员工 id: {} 状态: {}", id, status);
+        employeeService.startOrStop(status, id);
+
+        return Result.success();
+    }
 }

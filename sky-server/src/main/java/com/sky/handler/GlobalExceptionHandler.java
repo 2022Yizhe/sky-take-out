@@ -2,6 +2,7 @@ package com.sky.handler;
 
 import com.sky.constant.MessageConstant;
 import com.sky.exception.BaseException;
+import com.sky.exception.PasswordEditFailedException;
 import com.sky.result.Result;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -23,8 +24,10 @@ public class GlobalExceptionHandler {
      */
     @ExceptionHandler
     public Result exceptionHandler(BaseException ex){
-        log.error("异常信息：{}", ex.getMessage());
-        return Result.error(ex.getMessage());
+        String message = ex.getMessage();
+        log.error("[Handler] Runtime 异常：{}", ex.getMessage());
+
+        return Result.error(message);
     }
 
     /**
@@ -35,7 +38,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler
     public Result exceptionHandler(SQLIntegrityConstraintViolationException ex){
         String message = ex.getMessage();
-        log.error("异常信息：{}", message);
+        log.error("[Handler] SQL 异常：{}", message);
 
         // Duplicate entry 'lisi' for key 'employee.idx_username'
         if (message.contains("Duplicate entry")){
@@ -45,5 +48,18 @@ public class GlobalExceptionHandler {
         } else {
             return Result.error(MessageConstant.UNKNOWN_ERROR);
         }
+    }
+
+    /**
+     * 捕获修改密码异常
+     * @param ex 表示捕获 PasswordEditFailedException 异常
+     * @return REST 响应结果
+     */
+    @ExceptionHandler
+    public Result exceptionHandler(PasswordEditFailedException ex){
+        String message = ex.getMessage();
+        log.error("[Handler] 修改密码异常：{}", message);
+
+        return Result.error(message);
     }
 }

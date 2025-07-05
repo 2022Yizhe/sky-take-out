@@ -1,9 +1,11 @@
 package com.sky.controller.admin;
 
 import com.sky.constant.JwtClaimsConstant;
+import com.sky.context.BaseContext;
 import com.sky.dto.EmployeeDTO;
 import com.sky.dto.EmployeeLoginDTO;
 import com.sky.dto.EmployeePageQueryDTO;
+import com.sky.dto.PasswordEditDTO;
 import com.sky.entity.Employee;
 import com.sky.properties.JwtProperties;
 import com.sky.result.PageResult;
@@ -153,4 +155,19 @@ public class EmployeeController {
         return Result.success();
     }
 
+    /**
+     * 员工修改密码
+     * @param passwordEditDTO 修改密码 DTO 对象
+     * @return REST 返回结果
+     */
+    @PutMapping("/editPassword")
+    public Result<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO){
+
+        passwordEditDTO.setEmpId(BaseContext.getCurrentId());   // 取出当前员工 id 于 ThreadLocal （前端没写入 EmpId）
+
+        log.info("[Controller] 修改密码，员工 id: {}", passwordEditDTO.getEmpId());
+        employeeService.editPassword(passwordEditDTO);
+
+        return Result.success();
+    }
 }

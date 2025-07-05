@@ -78,6 +78,11 @@ public class WebMvcConfiguration extends WebMvcConfigurationSupport {
         log.info("[Config] 设置完成，接口文档访问 URL - http://localhost:8080" + pathPatterns);
     }
 
+    /**
+     * 扩展 SpringMVC 的消息转换器，添加一个 FastJson 转换器
+     * 预制 JacksonObjectMapper 继承自 ObjectMapper
+     * @param converters 既有的转换器列表
+     */
     protected void extendMessageConverters(List<HttpMessageConverter<?>> converters) {
         log.info("[Config] 扩展消息转换器...");
 

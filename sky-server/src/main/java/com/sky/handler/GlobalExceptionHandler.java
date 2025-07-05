@@ -23,7 +23,7 @@ public class GlobalExceptionHandler {
      * @return REST 响应结果
      */
     @ExceptionHandler
-    public Result exceptionHandler(BaseException ex){
+    public Result<String> exceptionHandler(BaseException ex){
         String message = ex.getMessage();
         log.error("[Handler] Runtime 异常：{}", ex.getMessage());
 
@@ -36,7 +36,7 @@ public class GlobalExceptionHandler {
      * @return REST 响应结果
      */
     @ExceptionHandler
-    public Result exceptionHandler(SQLIntegrityConstraintViolationException ex){
+    public Result<String> exceptionHandler(SQLIntegrityConstraintViolationException ex){
         String message = ex.getMessage();
         log.error("[Handler] SQL 异常：{}", message);
 
@@ -56,10 +56,12 @@ public class GlobalExceptionHandler {
      * @return REST 响应结果
      */
     @ExceptionHandler
-    public Result exceptionHandler(PasswordEditFailedException ex){
+    public Result<String> exceptionHandler(PasswordEditFailedException ex){
         String message = ex.getMessage();
         log.error("[Handler] 修改密码异常：{}", message);
 
         return Result.error(message);
     }
+
+
 }

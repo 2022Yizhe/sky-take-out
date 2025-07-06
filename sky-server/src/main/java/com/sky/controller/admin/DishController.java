@@ -6,13 +6,11 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
+import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 
 /**
@@ -20,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("/admin/dish")
-@ApiOperation("菜品管理")
+@Api(tags = "菜品相关接口")
 @Slf4j
 public class DishController {
 
@@ -40,5 +38,21 @@ public class DishController {
         dishService.saveWithFlavor(dishDTO);
 
         return Result.success();
+    }
+
+
+    /**
+     * 分页查询 菜品列表
+     * @param dishPageQueryDTO 分页查询参数 DTO 对象
+     * @return REST 响应结果
+     */
+    @GetMapping("/page")
+    @ApiOperation("分页查询 菜品列表")
+    public Result<PageResult> page(DishPageQueryDTO dishPageQueryDTO) {
+
+        log.info("[Controller] 分页查询菜品列表，查询信息: {}", dishPageQueryDTO);
+        PageResult pageResult = dishService.page(dishPageQueryDTO);
+
+        return Result.success(pageResult);
     }
 }

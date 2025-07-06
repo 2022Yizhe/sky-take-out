@@ -80,12 +80,13 @@ public class EmployeeServiceImpl implements EmployeeService {
         employee.setPassword(DigestUtils.md5DigestAsHex(PasswordConstant.DEFAULT_PASSWORD.getBytes()));
         // 状态默认值（正常）
         employee.setStatus(StatusConstant.ENABLE);
-        // 创建时间、更新时间
-        employee.setCreateTime(LocalDateTime.now());
-        employee.setUpdateTime(LocalDateTime.now());
-        // 创建人、更新人 ID
-        employee.setCreateUser(BaseContext.getCurrentId()); // 取出当前员工 id 于 ThreadLocal
-        employee.setUpdateUser(BaseContext.getCurrentId()); // 取出当前员工 id 于 ThreadLocal
+
+//        // 创建时间、更新时间 - 使用 AOP 进行公共字段填充
+//        employee.setCreateTime(LocalDateTime.now());
+//        employee.setUpdateTime(LocalDateTime.now());
+//        // 创建人、更新人 ID
+//        employee.setCreateUser(BaseContext.getCurrentId()); // 取出当前员工 id 于 ThreadLocal
+//        employee.setUpdateUser(BaseContext.getCurrentId()); // 取出当前员工 id 于 ThreadLocal
 
         employeeMapper.insert(employee);
     }
@@ -112,8 +113,10 @@ public class EmployeeServiceImpl implements EmployeeService {
 
         // 使用 lombok 提供的 builder 方法来创建 Employee 对象
         Employee employee = Employee.builder()
-                .status(status)
                 .id(id)
+                .status(status)
+//                .updateTime(LocalDateTime.now())  // 使用 AOP 进行公共字段填充
+//                .updateUser(BaseContext.getCurrentId())
                 .build();
         employeeMapper.update(employee);
     }
@@ -142,9 +145,9 @@ public class EmployeeServiceImpl implements EmployeeService {
         // 对象属性拷贝（等效于一次性 set 所有共有属性）：属性名一致时，前对象属性值会复制给后对象属性
         BeanUtils.copyProperties(employeeDTO, employee);
 
-        // 设置修改时间、修改人
-        employee.setUpdateTime(LocalDateTime.now());
-        employee.setUpdateUser(BaseContext.getCurrentId()); // 取出当前员工 id 于 ThreadLocal
+//        // 设置修改时间、修改人 - 使用 AOP 进行公共字段填充
+//        employee.setUpdateTime(LocalDateTime.now());
+//        employee.setUpdateUser(BaseContext.getCurrentId()); // 取出当前员工 id 于 ThreadLocal
 
         employeeMapper.update(employee);
     }

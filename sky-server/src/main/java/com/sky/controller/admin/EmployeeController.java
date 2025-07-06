@@ -161,6 +161,7 @@ public class EmployeeController {
      * @return REST 返回结果
      */
     @PutMapping("/editPassword")
+    @ApiOperation("员工修改密码")
     public Result<String> editPassword(@RequestBody PasswordEditDTO passwordEditDTO){
 
         passwordEditDTO.setEmpId(BaseContext.getCurrentId());   // 取出当前员工 id 于 ThreadLocal （前端没写入 EmpId）

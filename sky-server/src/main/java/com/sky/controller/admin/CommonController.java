@@ -33,7 +33,6 @@ public class CommonController {
      * 文件上传
      * @param file multipartFile
      * @return 文件上传的 url
-     * @throws IOException IO 异常
      */
     @PostMapping("/upload")
     @ApiOperation("文件上传")

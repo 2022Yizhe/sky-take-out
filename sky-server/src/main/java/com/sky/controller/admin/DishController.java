@@ -2,6 +2,8 @@ package com.sky.controller.admin;
 
 
 import com.sky.dto.DishDTO;
+import com.sky.dto.DishPageQueryDTO;
+import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.DishService;
 import io.swagger.annotations.ApiOperation;
@@ -25,7 +27,11 @@ public class DishController {
     @Autowired
     private DishService dishService;
 
-
+    /**
+     * 新增菜品
+     * @param dishDTO 菜品信息 DTO 对象
+     * @return REST 响应结果
+     */
     @PostMapping
     @ApiOperation("新增菜品")
     public Result<String> save(@RequestBody DishDTO dishDTO) {

@@ -11,6 +11,13 @@
             values
             (#{name},#{categoryId},#{price},#{image},#{description},#{status},#{createTime},#{updateTime},#{createUser},#{updateUser})
     </insert>
+    <delete id="deleteByIds">
+        delete from dish
+        where id in
+        <foreach collection="ids" open="(" item="id" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
 
     <!-- 分页查询 菜品列表，使用 PageHelper 无需手动指定 limit 参数 -->
     <select id="pageQuery" resultType="com.sky.vo.DishVO">

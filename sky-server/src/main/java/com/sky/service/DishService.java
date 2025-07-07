@@ -6,6 +6,8 @@ import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
 
 public interface DishService {
 
@@ -22,4 +24,11 @@ public interface DishService {
      * @return 菜品分页列表
      */
     PageResult page(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 批量删除菜品
+     * @param ids 菜品 id 列表
+     */
+    @Transactional  // 开启事务控制 （涉及多表操作）
+    void deleteBatch(List<Long> ids);
 }

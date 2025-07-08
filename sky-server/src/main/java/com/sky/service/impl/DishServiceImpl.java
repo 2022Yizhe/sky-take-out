@@ -99,5 +99,50 @@ public class DishServiceImpl implements DishService {
         dishFlavorMapper.deleteByDishIds(ids);  // 一并删除菜品口味数据 (即维护逻辑外键)
     }
 
+    /**
+     * 根据 id 查询菜品和对应的口味数据
+     */
+    @Override
+    public DishVO getByIdWithFlavor(Long id) {
+
+        // 1. 根据 id 查询菜品数据
+        Dish dish = dishMapper.getById(id);
+
+        // 2. 根据 id 查询口味数据
+        List<DishFlavor> dishFlavors = dishFlavorMapper.getByDishId(id);
+
+        // 3. 组装返回 DishVO 结果
+        DishVO dishVO = new DishVO();
+        BeanUtils.copyProperties(dish, dishVO);
+        dishVO.setFlavors(dishFlavors);
+
+        return dishVO;
+    }
+
+    /**
+     * 修改菜品及口味
+     */
+    @Override
+    public void updateWithFlavor(DishDTO dishDTO) {
+
+        // 创建一个菜品数据对象
+        Dish dish = new Dish();
+        BeanUtils.copyProperties(dishDTO, dish);
+
+        // 更新 1 条菜品数据
+        dishMapper.update(dish);
+
+        // 更新 n 条口味数据 (先删再加)
+        dishFlavorMapper.deleteByDishId(dishDTO.getId());
+
+        List<DishFlavor> flavors = dishDTO.getFlavors();
+        if (flavors != null && flavors.size() > 0) {
+            flavors.forEach(dishFlavor -> {
+                dishFlavor.setDishId(dishDTO.getId());  // 将主键填充给每一个 DishFlavor 对象 (因为前端没做)
+            });
+            dishFlavorMapper.insertBatch(flavors);
+        }
+    }
+
 
 }

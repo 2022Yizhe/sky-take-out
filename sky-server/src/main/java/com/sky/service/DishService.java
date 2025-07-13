@@ -3,6 +3,7 @@ package com.sky.service;
 
 import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.result.PageResult;
 import com.sky.vo.DishVO;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,4 +48,18 @@ public interface DishService {
      */
     @Transactional
     DishVO getByIdWithFlavor(Long id);
+
+    /**
+     * 条件查询菜品和口味
+     * @param dish 查询条件
+     * @return 菜品数据列表
+     */
+    List<DishVO> listWithFlavor(Dish dish);
+
+    /**
+     * 根据分类 id 查询菜品
+     * @param categoryId 分类 id
+     * @return 菜品数据列表
+     */
+    List<Dish> list(Long categoryId);
 }

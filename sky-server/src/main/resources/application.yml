@@ -42,9 +42,17 @@ sky:
     admin-ttl: ${sky.jwt.admin-ttl}
     # 设置前端传递过来的令牌名称
     admin-token-name: ${sky.jwt.admin-token-name}
+
+    ## 同理设置用户 jwt 配置参数
+    user-secret-key: ${sky.jwt.user-secret-key}
+    user-ttl: ${sky.jwt.user-ttl}
+    user-token-name: ${sky.jwt.user-token-name}
   alioss:
     # 阿里云 OSS 配置
     endpoint: ${sky.alioss.endpoint}
     access-key-id: ${sky.alioss.access-key-id}
     access-key-secret: ${sky.alioss.access-key-secret}
     bucket-name: ${sky.alioss.bucket-name}
+  wechat:
+    appid: ${sky.wechat.appid}
+    secret: ${sky.wechat.secret}

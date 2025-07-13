@@ -10,6 +10,9 @@ sky:
     admin-secret-key: itcastLearningJavaWebProjectWhichNameIsSkyTakeOut
     admin-ttl: 86_400_000
     admin-token-name: token
+    user-secret-key: itheimaLearningJavaWebProjectWhichNameIsSkyTakeOut
+    user-ttl: 86_400_000
+    user-token-name: authentication
   alioss:
     endpoint: oss-cn-beijing.aliyuncs.com
     access-key-id: LTAI5tGfJTVDks5JJwqQTJyo
@@ -20,3 +23,6 @@ sky:
     port: 6379
     database: 1
     password: 123456
+  wechat:
+    appid: wxa7ed9aee4e5d54a6
+    secret: e5ef5d59fa9affcede7e44e371ac50bf

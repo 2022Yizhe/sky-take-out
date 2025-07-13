@@ -48,9 +48,10 @@ public class EmployeeController {
     public Result<EmployeeLoginVO> login(@RequestBody EmployeeLoginDTO employeeLoginDTO) {
         log.info("[Controller] 员工登录: {}", employeeLoginDTO);
 
+        // 1. Web 登录
         Employee employee = employeeService.login(employeeLoginDTO);
 
-        // 登录成功后，生成 jwt 令牌
+        // 2. 登录成功后，生成 jwt 令牌
         Map<String, Object> claims = new HashMap<>();
         claims.put(JwtClaimsConstant.EMP_ID, employee.getId());
         String token = JwtUtil.createJWT(

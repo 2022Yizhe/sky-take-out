@@ -12,8 +12,17 @@ import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
+
 @Mapper
 public interface DishMapper {
+
+    /**
+     * & 动态 SQL
+     * 条件查询菜品
+     * @param dish 菜品查询条件
+     * @return 菜品列表
+     */
+    List<Dish> list(Dish dish);
 
     /**
      * 根据分类 id 查询菜品数量
@@ -68,4 +77,12 @@ public interface DishMapper {
      */
     @AutoFill(value = OperationType.UPDATE)
     void update(Dish dish);
+
+    /**
+     * 根据套餐 id 查询菜品
+     * @param setmealId 套餐 id
+     * @return 菜品列表
+     */
+    @Select("select a.* from dish a left join setmeal_dish b on a.id = b.dish_id where b.setmeal_id = #{setmealId}")
+    List<Dish> getBySetmealId(Long setmealId);
 }

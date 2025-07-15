@@ -19,7 +19,7 @@ public class ShopController {
     public static final String SHOP_STATUS = "SHOP_STATUS";
 
     @Autowired
-    private RedisTemplate redisTemplate;
+    private RedisTemplate redisTemplate;    // Redis Java 客户端
 
     /**
      * 获取营业状态

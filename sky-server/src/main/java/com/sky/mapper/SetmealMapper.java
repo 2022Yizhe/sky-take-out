@@ -60,7 +60,7 @@ public interface SetmealMapper {
      * 修改套餐
      * @param setmeal 套餐对象
      */
-    @AutoFill(OperationType.INSERT)
+    @AutoFill(OperationType.UPDATE)
     void update(Setmeal setmeal);
 
     /**

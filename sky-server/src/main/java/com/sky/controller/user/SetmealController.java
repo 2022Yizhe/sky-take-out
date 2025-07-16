@@ -12,6 +12,8 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.cache.annotation.Cacheable;
+
 
 import java.util.List;
 
@@ -40,11 +42,13 @@ public class SetmealController {
 
     /**
      * 根据分类 id 查询套餐列表
+     * &Redis 查询套餐，指定分类（比如商务套餐 分类id=15）的套餐列表被缓存
      * @param categoryId 分类 id
      * @return REST 响应结果
      */
     @GetMapping("/list")
     @ApiOperation("根据分类 id 查询套餐列表")
+    @Cacheable(cacheNames = "setmealCache", key = "#categoryId")
     public Result<List<Setmeal>> list(Long categoryId) {
         Setmeal setmeal = new Setmeal();
         setmeal.setCategoryId(categoryId);

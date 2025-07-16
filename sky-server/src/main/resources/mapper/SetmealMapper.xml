@@ -57,6 +57,7 @@
                 update_user = #{updateUser},
             </if>
         </set>
+        where id = #{id}
     </update>
 
 

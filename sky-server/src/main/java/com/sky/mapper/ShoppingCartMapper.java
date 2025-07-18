@@ -3,6 +3,7 @@ package com.sky.mapper;
 import com.sky.annotation.AutoFill;
 import com.sky.entity.ShoppingCart;
 import com.sky.enumeration.OperationType;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -33,4 +34,11 @@ public interface ShoppingCartMapper {
      */
 //    @AutoFill(value = OperationType.INSERT)   // 用不了，只有 Create_Time 字段
     void save(ShoppingCart cart);
+
+    /**
+     * 根据用户 id 删除购物车列表
+     * @param currentId 用户 id
+     */
+    @Delete("delete from shopping_cart where user_id = #{currentId}")
+    void deleteAll(Long currentId);
 }

@@ -50,4 +50,18 @@ public class ShoppingCartController {
 
         return Result.success(list);
     }
+
+    /**
+     * 清空购物车所有 item
+     * @return REST 响应结果
+     */
+    @DeleteMapping("/clean")
+    @ApiOperation("清空购物车")
+    public Result<String> clean() {
+
+        log.info("[Controller] 用户清空了购物车");
+        shoppingCartService.cleanShoppingCart();
+
+        return Result.success();
+    }
 }

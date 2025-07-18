@@ -66,4 +66,17 @@ public class ShoppingCartServiceImpl implements ShoppingCartService {
             shoppingCartMapper.save(shoppingCart);
         }
     }
+
+    /**
+     * 获取当前用户的购物车数据 (列表)
+     */
+    @Override
+    public List<ShoppingCart> showShoppingCart() {
+
+        // 创建查询条件
+        ShoppingCart shoppingCart = ShoppingCart.builder()
+                .userId(BaseContext.getCurrentId())
+                .build();
+        return shoppingCartMapper.list(shoppingCart);
+    }
 }

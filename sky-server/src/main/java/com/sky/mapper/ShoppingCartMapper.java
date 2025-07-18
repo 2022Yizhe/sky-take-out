@@ -21,13 +21,14 @@ public interface ShoppingCartMapper {
 
     /**
      * 根据 id 修改购物车对象
-     * @ 动态 SQL
+     * & 动态 SQL
      * @param cart 新的购物车对象
      */
     void updateById(ShoppingCart cart);
 
     /**
      * 插入购物车对象
+     * & 动态 SQL
      * @param cart 新的购物车对象
      */
 //    @AutoFill(value = OperationType.INSERT)   // 用不了，只有 Create_Time 字段

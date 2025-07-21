@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+
+<mapper namespace="com.sky.mapper.OrderMapper">
+
+    <!-- 由于订单明细表需要使用订单表的 id，故需要用到主键返回-->
+    <insert id="insert" useGeneratedKeys="true" keyProperty="id">
+        insert into orders
+            (user_id, address_book_id, order_time, checkout_time, pay_method, pay_status, amount,
+             remark, user_name, phone, address, consignee, cancel_reason, rejection_reason, cancel_time,
+             estimated_delivery_time, delivery_status, delivery_time, pack_amount, tableware_number, tableware_status)
+        values
+            (#{userId}, #{addressBookId}, #{orderTime}, #{checkoutTime}, #{payMethod}, #{payStatus}, #{amount},
+             #{remark}, #{userName}, #{phone}, #{address}, #{consignee}, #{cancelReason}, #{rejectionReason}, #{cancelTime},
+             #{estimatedDeliveryTime}, #{deliveryStatus}, #{deliveryTime}, #{packAmount}, #{tablewareNumber}, #{tablewareStatus})
+    </insert>
+</mapper>

@@ -15,8 +15,8 @@ sky:
     user-token-name: authentication
   alioss:
     endpoint: oss-cn-beijing.aliyuncs.com
-    access-key-id: LTAI5tGfJTVDks5JJwqQTJyo
-    access-key-secret: xwkjYEMLSVd6Jix36UAnGlWVZ0fMdP
+    access-key-id: ${OSS_ACCESS_KEY_ID}
+    access-key-secret: ${OSS_ACCESS_KEY_SECRET}
     bucket-name: web-yizhe-sky
   redis:
     host: localhost

@@ -1,5 +1,6 @@
 **/target/
-/doc/
+/doc/*.html
+/doc/*.png
 .idea
 **/test/
 
@@ -7,3 +8,4 @@
 *.iml
 *.class
 *Test.java
+

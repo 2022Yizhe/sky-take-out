@@ -23,11 +23,9 @@ public class OrderTask {
     /**
      * 处理支付超时订单
      */
-//    @Scheduled(cron = "0 * * * * ? ")   // 每分钟执行一次
-    @Scheduled(cron = "1/5 * * * * ? ")   // 测试：每 5s 执行一次
+    @Scheduled(cron = "0 * * * * ? ")   // 每分钟执行一次
+//    @Scheduled(cron = "1/5 * * * * ? ")   // 测试：每 5s 执行一次
     public void processTimeoutOrder() {
-
-        log.info("[Task] 处理支付超时订单");
 
         // select * from orders where status = 1 and pay_time < (当前时间 - 15min)
         List<Orders> ordersList = orderMapper.getByStatusAndOrderTime(Orders.PENDING_PAYMENT, LocalDateTime.now().plusMinutes(-15));
@@ -39,6 +37,8 @@ public class OrderTask {
                 orders.setCancelTime(LocalDateTime.now());  // 设置取消时间
                 orderMapper.update(orders);
             }
+
+            log.info("[Task] 已处理支付超时订单，完成 {} 个", ordersList.size());
         }
     }
 
@@ -49,8 +49,6 @@ public class OrderTask {
 //    @Scheduled(cron = "0/5 * * * * ? ")   // 测试：每 5s 执行一次
     public void processDeliveryTimeoutOrder() {
 
-        log.info("[Task] 处理处于派送中的订单");
-
         // select * from orders where status = 4 and delivery_time < (当前时间 - 60min)
         List<Orders> ordersList = orderMapper.getByStatusAndOrderTime(Orders.DELIVERY_IN_PROGRESS, LocalDateTime.now().plusMinutes(-60));
 
@@ -60,6 +58,8 @@ public class OrderTask {
 //                orders.setDeliveryTime(LocalDateTime.now());    // 订单完成时间
                 orderMapper.update(orders);
             }
+
+            log.info("[Task] 已处理处于派送中的订单，完成 {} 个", ordersList.size());
         }
     }
 }

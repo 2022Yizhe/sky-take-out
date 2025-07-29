@@ -37,20 +37,24 @@ public class PayNotifyController {
      */
     @RequestMapping("/paySuccess")
     public void paySuccessNotify(HttpServletRequest request, HttpServletResponse response) throws Exception {
-        //读取数据
-        String body = readData(request);
-        log.info("[Controller] 支付成功回调：{}", body);
+        /// DEBUG.跳过支付成功后的数据解析  (实际生产需取消休止)
+        String outTradeNo = "TESTFORWXPAY001";
+        if (false){
+            //读取数据
+            String body = readData(request);
+            log.info("[Controller] 支付成功回调：{}", body);
 
-        //数据解密
-        String plainText = decryptData(body);
-        log.info("[Controller] 解密后的文本：{}", plainText);
+            //数据解密
+            String plainText = decryptData(body);
+            log.info("[Controller] 解密后的文本：{}", plainText);
 
-        JSONObject jsonObject = JSON.parseObject(plainText);
-        String outTradeNo = jsonObject.getString("out_trade_no");//商户平台订单号
-        String transactionId = jsonObject.getString("transaction_id");//微信支付交易号
+            JSONObject jsonObject = JSON.parseObject(plainText);
+            outTradeNo = jsonObject.getString("out_trade_no");//商户平台订单号
+            String transactionId = jsonObject.getString("transaction_id");//微信支付交易号
 
-        log.info("[Controller] 商户平台订单号：{}", outTradeNo);
-        log.info("[Controller] 微信支付交易号：{}", transactionId);
+            log.info("[Controller] 商户平台订单号：{}", outTradeNo);
+            log.info("[Controller] 微信支付交易号：{}", transactionId);
+        }
 
         //业务处理，修改订单状态、来单提醒
         orderService.paySuccess(outTradeNo);

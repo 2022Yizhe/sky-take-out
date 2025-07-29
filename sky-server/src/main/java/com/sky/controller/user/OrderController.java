@@ -12,6 +12,15 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import com.alibaba.fastjson.JSON;
+
+import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
+
 
 @RestController(value = "userOrderController")
 @RequestMapping("/user/order")
@@ -49,6 +58,38 @@ public class OrderController {
         log.info("[Controller] 订单支付：{}", ordersPaymentDTO);
         OrderPaymentVO orderPaymentVO = orderService.payment(ordersPaymentDTO);
         log.info("[Controller] 生成预支付交易单：{}", orderPaymentVO);
+
+        /// DEBUG.模拟微信支付成功 (实际生产需删除)
+        {
+            // 模拟支付成功的数据
+            Map<String, Object> resource = new HashMap<>();
+            resource.put("ciphertext", "your_ciphertext_here");  // 替换为实际的密文
+            resource.put("nonce", "your_nonce_here");            // 替换为实际的nonce
+            resource.put("associated_data", "your_associated_data_here");  // 替换为实际的associated_data
+
+            Map<String, Object> requestBody = new HashMap<>();
+            requestBody.put("resource", resource);
+            requestBody.put("out_trade_no", "your_order_number");     // 商户平台订单号
+            requestBody.put("transaction_id", "your_transaction_id_here"); // 微信支付交易号
+
+            // 将请求体转换为JSON字符串
+            String jsonBody = JSON.toJSONString(requestBody);
+
+            // 发送HTTP POST请求
+            URL url = new URL("http://localhost:8080/notify/paySuccess");  // 替换为实际的URL
+            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+            connection.setRequestMethod("POST");
+            connection.setRequestProperty("Content-Type", "application/json; utf-8");
+            connection.setRequestProperty("Accept", "application/json");
+            connection.setDoOutput(true);
+
+            try (OutputStream os = connection.getOutputStream()) {
+                byte[] input = jsonBody.getBytes(StandardCharsets.UTF_8);
+                os.write(input, 0, input.length);
+            }
+            int responseCode = connection.getResponseCode();
+            System.out.println("[Controller] (Test WX-PAY Success) Response Code: " + responseCode);
+        }
 
         return Result.success(orderPaymentVO);
     }

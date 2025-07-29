@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
@@ -13,14 +14,14 @@ import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.websocket.WebSocketServer;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -43,6 +44,9 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private WeChatPayUtil weChatPayUtil;
+
+    @Autowired
+    private WebSocketServer webSocketServer;
 
     /**
      * 用户提交订单
@@ -108,7 +112,18 @@ public class OrderServiceImpl implements OrderService {
         Long userId = BaseContext.getCurrentId();
         User user = userMapper.getById(userId);
 
-        //调用微信支付接口，生成预支付交易单
+        /// DEBUG.无法认证商户，此处省略实际的微信支付 (实际生产需删除)
+        if (true){
+            JSONObject jo = new JSONObject();
+            jo.put("timeStamp", "20230521110000000001");
+            jo.put("nonceStr", "20230521110000000001");
+            jo.put("package", "prepay_id=" + 123456L);
+            jo.put("signType", "RSA");
+            jo.put("paySign", "20230521110000000001");
+            return jo.toJavaObject(OrderPaymentVO.class);
+        }
+
+        /// MAIN.调用微信支付接口，生成预支付交易单
         JSONObject jsonObject = weChatPayUtil.pay(
                 ordersPaymentDTO.getOrderNumber(), //商户订单号
                 new BigDecimal("0.01"), //支付金额，单位 元
@@ -135,7 +150,7 @@ public class OrderServiceImpl implements OrderService {
         // 根据订单号查询订单
         Orders ordersDB = orderMapper.getByNumber(outTradeNo);
 
-        // 根据订单id更新订单的状态、支付方式、支付状态、结账时间
+        // 根据订单 id 更新订单的状态、支付方式、支付状态、结账时间
         Orders orders = Orders.builder()
                 .id(ordersDB.getId())
                 .status(Orders.TO_BE_CONFIRMED)
@@ -144,5 +159,14 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         orderMapper.update(orders);
+
+        // 通过 WebSocket 推送订单状态消息 (Web Server 处理)
+        Map<String, Object> message = new HashMap<>();
+        message.put("type", 1);     // 1-来单提醒，2-客户催单
+        message.put("orderId", ordersDB.getId());
+        message.put("content", "订单号：" + outTradeNo);
+
+        String jsonMessage = JSON.toJSONString(message);
+        webSocketServer.sendToAllClient(jsonMessage);
     }
 }

@@ -36,10 +36,10 @@ import java.util.List;
 @Component
 public class WeChatPayUtil {
 
-    //微信支付下单接口地址
+    // 微信支付下单接口地址
     public static final String JSAPI = "https://api.mch.weixin.qq.com/v3/pay/transactions/jsapi";
 
-    //申请退款接口地址
+    // 申请退款接口地址
     public static final String REFUNDS = "https://api.mch.weixin.qq.com/v3/refund/domestic/refunds";
 
     @Autowired
@@ -74,7 +74,7 @@ public class WeChatPayUtil {
     }
 
     /**
-     * 发送post方式请求
+     * 发送 post 方式请求
      *
      * @param url
      * @param body
@@ -100,7 +100,7 @@ public class WeChatPayUtil {
     }
 
     /**
-     * 发送get方式请求
+     * 发送 get 方式请求
      *
      * @param url
      * @return
@@ -124,7 +124,7 @@ public class WeChatPayUtil {
     }
 
     /**
-     * jsapi下单
+     * jsapi 下单
      *
      * @param orderNum    商户订单号
      * @param total       总金额

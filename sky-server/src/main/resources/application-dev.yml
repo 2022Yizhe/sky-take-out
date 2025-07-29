@@ -26,3 +26,7 @@ sky:
   wechat:
     appid: wxa7ed9aee4e5d54a6
     secret: e5ef5d59fa9affcede7e44e371ac50bf
+  shop:
+    address: 沈阳浑南区白塔堡美食一街 256 号
+  baidu:
+    ak: UnableToAccessBaiduMapAPI

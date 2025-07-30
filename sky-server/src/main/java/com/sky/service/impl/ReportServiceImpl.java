@@ -1,11 +1,13 @@
 package com.sky.service.impl;
 
 
+import com.sky.dto.GoodsSalesDTO;
 import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +17,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -210,6 +213,34 @@ public class ReportServiceImpl implements ReportService {
                 .totalOrderCount(total)
                 .validOrderCount(valid)
                 .orderCompletionRate(CompletionRate)
+                .build();
+    }
+
+    /**
+     * 销量排名 Top 10
+     */
+    @Override
+    public SalesTop10ReportVO getsalesTop10Statistics(LocalDate begin, LocalDate end) {
+
+        // 1.获取指定范围的精确时间
+        LocalDateTime beginTime = LocalDateTime.of(begin, LocalTime.MIN);
+        LocalDateTime endTime = LocalDateTime.of(end, LocalTime.MAX);
+
+        // 2.查询销量 Top 10 商品 DTO 对象
+        List<GoodsSalesDTO> salesTop10List = orderMapper.getSalesTop10(beginTime, endTime);
+
+        // 3.组装响应结果
+        List<String> nameList = salesTop10List.stream().map(GoodsSalesDTO::getName).collect(Collectors.toList());
+        List<Integer> numberList = salesTop10List.stream().map(GoodsSalesDTO::getNumber).collect(Collectors.toList());
+
+        StringJoiner nameListJoiner = new StringJoiner(",");
+        nameList.forEach(name -> nameListJoiner.add(name));   // 等效于 'toString()'
+        StringJoiner numberListJoiner = new StringJoiner(",");
+        numberList.forEach(number -> numberListJoiner.add(number.toString()));
+
+        return SalesTop10ReportVO.builder()
+                .nameList(nameListJoiner.toString())
+                .numberList(numberListJoiner.toString())
                 .build();
     }
 }

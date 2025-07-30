@@ -12,5 +12,18 @@
             (#{openid}, #{name}, #{phone}, #{sex}, #{idNumber}, #{avatar}, #{createTime})
     </insert>
 
+    <!--  统计日期范围内用户数量  -->
+    <select id="countByMap" resultType="java.lang.Integer">
+        select count(id) from user
+        <where>
+            <if test="beginTime != null">
+                and create_time &gt;= #{beginTime}
+            </if>
+            <if test="endTime != null">
+                and create_time &lt;= #{endTime}
+            </if>
+        </where>
+    </select>
+
 
 </mapper>

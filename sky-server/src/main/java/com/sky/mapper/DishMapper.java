@@ -12,6 +12,7 @@ import org.apache.ibatis.annotations.Select;
 import org.apache.ibatis.annotations.Update;
 
 import java.util.List;
+import java.util.Map;
 
 
 @Mapper
@@ -94,4 +95,11 @@ public interface DishMapper {
      */
     @Update("update dish set status = #{status} where id = #{id}")
     void startOrStop(Integer status, Long id);
+
+    /**
+     * 根据条件统计菜品数量
+     * @param map 查询条件
+     * @return 菜品数量
+     */
+    Integer countByMap(Map map);
 }

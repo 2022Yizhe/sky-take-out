@@ -6,13 +6,19 @@ import com.sky.entity.Orders;
 import com.sky.mapper.OrderMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
+import com.sky.service.WorkspaceService;
+import com.sky.vo.*;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -21,6 +27,7 @@ import java.util.stream.Collectors;
 
 
 @Service
+@Slf4j
 public class ReportServiceImpl implements ReportService {
 
     @Autowired
@@ -28,6 +35,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private WorkspaceService workspaceService;
 
     /**
      * 营业额统计
@@ -243,4 +253,71 @@ public class ReportServiceImpl implements ReportService {
                 .numberList(numberListJoiner.toString())
                 .build();
     }
+
+    /**
+     * 导出营业数据
+     */
+    @Override
+    public void exportBusinessData(HttpServletResponse response) {
+
+        // 1.查询营业数据
+        LocalDateTime begin = LocalDateTime.of(LocalDate.now().minusDays(30), LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(LocalDate.now().minusDays(1), LocalTime.MIN);
+        BusinessDataVO businessData = workspaceService.getBusinessData(begin, end);
+
+        // 2.读取 resources 下的模板文件，创建 Excel 对象
+        XSSFWorkbook excel = null;
+        try {
+            InputStream in = this.getClass().getClassLoader().getResourceAsStream("template/运营数据报表模板.xlsx");
+            if (in != null) {
+                excel = new XSSFWorkbook(in);
+            }
+        } catch (IOException e){
+            log.error("[Server] 获取 Excel 模板文件失败！");
+            e.printStackTrace();
+        }
+
+        // 3.通过 POI 导出 Excel 文件
+        XSSFSheet sheet = excel.getSheet("Sheet1");
+        sheet.getRow(1).getCell(1).setCellValue("(时间)" + begin + " 至 " + end);
+
+        sheet.getRow(3).getCell(2).setCellValue("(营业额)" + businessData.getTurnover());
+        sheet.getRow(3).getCell(4).setCellValue("(订单完成率)" + businessData.getOrderCompletionRate());
+        sheet.getRow(3).getCell(6).setCellValue("(新增用户数)" + businessData.getNewUsers());
+
+        sheet.getRow(4).getCell(2).setCellValue("(有效订单)" + businessData.getValidOrderCount());
+        sheet.getRow(4).getCell(4).setCellValue("(平均客单价)" + businessData.getUnitPrice());
+
+        sheet.getRow(7).getCell(1).setCellValue("(日期)" );
+
+        // 填充明细数据时，重新查询每日的营业额数据
+        for (int i = 0; i < 30; i++) {
+            LocalDateTime dayNEnd = begin.plusDays(i);
+            LocalDateTime dayNBegin = dayNEnd.minusDays(1);
+            BusinessDataVO dayData = workspaceService.getBusinessData(dayNBegin, dayNEnd);
+
+            XSSFRow row = sheet.getRow(7 + i);
+            row.getCell(1).setCellValue(dayNBegin.toString());
+            row.getCell(2).setCellValue(dayData.getTurnover());
+            row.getCell(3).setCellValue(dayData.getValidOrderCount());
+            row.getCell(4).setCellValue(dayData.getOrderCompletionRate());
+            row.getCell(5).setCellValue(dayData.getUnitPrice());
+            row.getCell(6).setCellValue(dayData.getNewUsers());
+        }
+
+        // 4.通过 Servlet 输出流传输 Excel 文件
+        try {
+            ServletOutputStream out = response.getOutputStream();
+            excel.write(out);
+
+            // 关闭流
+            out.close();
+            excel.close();
+        } catch (IOException e){
+
+            log.error("导出 Excel 到客户端浏览器失败！");
+            e.printStackTrace();
+        }
+    }
+
 }
